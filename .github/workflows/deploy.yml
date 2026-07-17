@@ -95,16 +95,8 @@ jobs:
         working-directory: infra
 
       - name: Terraform apply
-        shell: bash
         run: |
-          for i in 1 2 3 4 5; do
-            terraform apply -auto-approve \
-              -var="image_tag=${{ github.sha }}" \
-              -var="db_password=${{ secrets.DB_PASSWORD }}" && exit 0
-
-            echo "Apply failed (attempt $i/5). Importing existing task definition..."
-            terraform import aws_ecs_task_definition.app wallet-task 2>/dev/null || true
-            sleep 10
-          done
-          exit 1
+          terraform apply -auto-approve \
+            -var="image_tag=${{ github.sha }}" \
+            -var="db_password=${{ secrets.DB_PASSWORD }}"
         working-directory: infra
