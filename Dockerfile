@@ -7,15 +7,16 @@ COPY tsconfig.json ./
 RUN npx tsc
 RUN npm prune --omit=dev
 
-FROM gcr.io/distroless/nodejs24-debian12
+FROM node:24-bookworm-slim
+RUN apt-get update && apt-get upgrade -y --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 LABEL maintainer="andres@gomezalvarez.dev"
 LABEL project="secure-wallet"
 
 WORKDIR /app
-COPY --from=builder --chown=65532:65532 /app/dist ./dist
-COPY --from=builder --chown=65532:65532 /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
 ENV NODE_ENV=production
 EXPOSE 8080
-USER nonroot
-CMD ["dist/index.js"]
+USER node
+CMD ["node", "dist/index.js"]
