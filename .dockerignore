@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.git/
+.env
+.env.*
+sql/
+*.md
+.gitignore
+.dockerignore
+Dockerfile
+todo.md
+.github/
+*.log

@@ -1,0 +1,106 @@
+name: Deploy to ECS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'package*.json'
+      - 'tsconfig.json'
+      - 'Dockerfile'
+      - 'infra/**'
+
+env:
+  AWS_REGION: eu-west-1
+  ECR_REGISTRY: 900881669003.dkr.ecr.eu-west-1.amazonaws.com
+  ECR_REPOSITORY: wallet-app
+  IMAGE_TAG: ${{ github.sha }}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  prechecks:
+    name: Prechecks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies and typecheck
+        run: |
+          npm ci
+          npm run typecheck
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Trivy security scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          exit-code: 1
+          severity: HIGH,CRITICAL
+
+  deploy:
+    name: Deploy
+    needs: prechecks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::900881669003:role/GitHubActionsECSRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          cache-from: type=gha
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform init
+        run: terraform init
+        working-directory: infra
+
+      - name: Terraform apply
+        run: |
+          terraform apply -auto-approve \
+            -var="image_tag=${{ github.sha }}" \
+            -var="db_password=${{ secrets.DB_PASSWORD }}"
+        working-directory: infra

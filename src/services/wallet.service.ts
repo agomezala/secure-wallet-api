@@ -1,7 +1,6 @@
 import {
   findWalletByUserId,
-  updateBalance,
-  insertTransaction,
+  transferAtomic,
 } from '../repositories/wallet.repository';
 
 export class InsufficientFundsError extends Error {
@@ -52,10 +51,13 @@ export async function transfer(
   const newSenderBalance = (senderBalance - transferAmount).toString();
   const newReceiverBalance = (receiverBalance + transferAmount).toString();
 
-  await updateBalance(senderId, newSenderBalance);
-  await updateBalance(receiverId, newReceiverBalance);
-
-  const transaction = await insertTransaction(senderId, receiverId, amount);
+  const transaction = await transferAtomic(
+    senderId,
+    receiverId,
+    amount,
+    newSenderBalance,
+    newReceiverBalance,
+  );
 
   return {
     senderBalance: newSenderBalance,
