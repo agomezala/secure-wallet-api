@@ -12,8 +12,11 @@ app.use(express.json({ limit: '10kb' }));
 
 app.use(routes);
 
+
+
 app.listen(config.port, () => {
   logger.info({ port: config.port, env: config.nodeEnv }, 'Server started');
 });
 
 export default app;
+
