@@ -34,7 +34,6 @@ resource "aws_ecs_task_definition" "app" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          "awslogs-create-group"  = "true"
           "awslogs-group"         = "/ecs/wallet-task"
           "awslogs-region"        = "eu-west-1"
           "awslogs-stream-prefix" = "wallet"
