@@ -3,7 +3,6 @@ dist/
 .git/
 .env
 .env.*
-sql/
 *.md
 .gitignore
 .dockerignore

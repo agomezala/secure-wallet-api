@@ -16,6 +16,7 @@ LABEL project="secure-wallet"
 WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
+COPY sql/ ./sql/
 ENV NODE_ENV=production
 EXPOSE 8080
 USER node
