@@ -99,6 +99,5 @@ jobs:
       - name: Terraform apply
         run: |
           terraform apply -auto-approve \
-            -var="image_tag=${{ github.sha }}" \
-            -var="db_password=${{ secrets.DB_PASSWORD }}"
+            -var="image_tag=${{ github.sha }}"
         working-directory: infra
