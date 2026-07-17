@@ -1,0 +1,3 @@
+# CVE-2026-12151 - undici: DoS via unbounded memory growth in WebSocket
+# Node.js runtime bundled package. Not exploitable - app doesn't use WebSockets.
+CVE-2026-12151
