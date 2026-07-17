@@ -1,4 +1,4 @@
-FROM node:24-bookworm-slim AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -7,8 +7,8 @@ COPY tsconfig.json ./
 RUN npx tsc
 RUN npm prune --omit=dev
 
-FROM node:24-bookworm-slim
-RUN apt-get update && apt-get upgrade -y --no-install-recommends && rm -rf /var/lib/apt/lists/*
+FROM node:24-alpine
+RUN apk update && apk upgrade --no-cache
 
 LABEL maintainer="andres@gomezalvarez.dev"
 LABEL project="secure-wallet"
