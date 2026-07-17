@@ -137,7 +137,20 @@ Una vez desplegado, Terraform genera los siguientes outputs que necesita el API:
 
 ## Desarrollo local
 
-### Opción 1: Con Docker (recomendado)
+### Opción 1: `npm run dev` (recomendado para desarrollo)
+
+Usa `tsx watch` — hot-reload automático al guardar cambios.
+
+```bash
+npm ci
+cp .env.example .env
+# Editar .env con tu DATABASE_URL local
+npm run dev
+```
+
+El servidor se reinicia solo al modificar cualquier archivo en `src/`.
+
+### Opción 2: Docker (solo para probar el build de producción)
 
 ```bash
 docker build -t secure-wallet-api .
@@ -148,23 +161,7 @@ docker run -p 8080:8080 \
   secure-wallet-api
 ```
 
-### Opción 2: Sin Docker
-
-```bash
-# Instalar dependencias
-npm ci
-
-# Configurar variables de entorno
-cp .env.example .env
-# Editar .env con tu DATABASE_URL local
-
-# Compilar y ejecutar
-npm run build
-npm start
-
-# O en desarrollo con hot-reload
-npm run dev
-```
+> **Nota**: Esta opción requiere rebuildear la imagen cada vez que cambias código. No es práctica para desarrollo activo. Úsala solo para verificar que el build de producción funciona.
 
 ---
 
