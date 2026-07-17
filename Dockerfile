@@ -1,4 +1,4 @@
-FROM node:24-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -7,7 +7,7 @@ COPY tsconfig.json ./
 RUN npx tsc
 RUN npm prune --omit=dev
 
-FROM node:24-alpine
+FROM node:22-alpine
 RUN apk update && apk upgrade --no-cache
 
 LABEL maintainer="andres@gomezalvarez.dev"

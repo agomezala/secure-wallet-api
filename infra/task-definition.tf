@@ -9,8 +9,8 @@ resource "aws_ecs_task_definition" "app" {
   task_role_arn            = data.terraform_remote_state.infra.outputs.ecs_task_role_arn
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = "512"
+  memory                   = "1024"
 
   container_definitions = jsonencode([
     {
