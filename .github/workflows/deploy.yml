@@ -1,11 +1,13 @@
 name: Deploy to ECS
 
-on:
-  push:
-    branches:
-      - master
-      - main
-      - develop
+# Comentado: el pipeline se desactiva en modo escaparate.
+# Descomentar y pushear a master/main/develop para activar CI/CD.
+# on:
+#   push:
+#     branches:
+#       - master
+#       - main
+#       - develop
 
 env:
   AWS_REGION: eu-west-1
