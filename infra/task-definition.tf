@@ -29,7 +29,7 @@ resource "aws_ecs_task_definition" "app" {
       environment = [
         { name = "NODE_ENV",    value = "production" },
         { name = "PORT",        value = "8080" },
-        { name = "DATABASE_URL", value = "postgresql://${local.db_user}:${var.db_password}@${local.db_endpoint}:${local.db_port}/${local.db_name}?sslmode=require" },
+        { name = "DATABASE_URL", value = "postgresql://${local.db_user}:${var.db_password}@${local.db_endpoint}:${local.db_port}/${local.db_name}?sslmode=no-verify" },
       ]
       logConfiguration = {
         logDriver = "awslogs"
