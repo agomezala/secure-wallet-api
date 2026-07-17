@@ -4,12 +4,8 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'src/**'
-      - 'package*.json'
-      - 'tsconfig.json'
-      - 'Dockerfile'
-      - 'infra/**'
+      - main
+      - develop
 
 env:
   AWS_REGION: eu-west-1
